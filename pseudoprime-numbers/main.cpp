@@ -1,22 +1,26 @@
 #include <stdio.h>
+#include <chrono>
+#include <iostream>
 typedef long long unsigned llu;
 
 
 bool isPrime(int n)
 {
-    if ( n == 2 || n == 3 )
+    if ( n == 2 || n == 3 ) {
         return true;
-    else if ( n%2 == 0 || n%3 == 0)
+    } else if ( n%2 == 0 || n%3 == 0 ) {
         return false;
+    }
 
     long unsigned i=5, o=0, m=3;
-    while ( n != 1 && 0 < n && i < n/m)
+    while ( n != 1 && 0 < n && i < n/m )
     {
-        if ( n%i == 0 )
+        if( n%i == 0 ) {
             return false;
+        }
 
         m = i;
-        if ( i%6 == 5 ) {
+        if( i%6 == 5 ) {
             o++;
             i += 2;
         } else {
@@ -28,21 +32,21 @@ bool isPrime(int n)
 
 llu repMod(const llu a, const llu p)
 {
-    if (p == 0) return 1;
+    if( p == 0 ) { return 1; }
 
     llu e = p;
     llu rem = 1;
 
     llu c = a;
 
-    while (1 <= e)
+    while( 1 <= e )
     {
-        if (e % 2 == 1)
+        if( e % 2 == 1 )
         {
             rem *= c;
             rem %= p;
 
-            if (--e == 0) return rem;
+            if( --e == 0 ) { return rem; }
         }
 
         c *= c;
@@ -56,7 +60,7 @@ llu repMod(const llu a, const llu p)
 void isBAPP(int a, int p)
 {
     bool ans;
-    if ( isPrime(p))
+    if ( isPrime(p) )
     {
         ans = false;
     }
@@ -77,12 +81,20 @@ void isBAPP(int a, int p)
 int main()
 {
     int p, a;
-    while (1)
+
+    auto t_start = std::chrono::high_resolution_clock::now();
+    while(1)
     {
         scanf("%d %d\n", &p, &a);
-        if (p == 0 && a == 0) { break; } // EXIT condition
+        if ( p == 0 && a == 0 ) { break; } // EXIT condition
 
         // Calc.
         isBAPP(a, p);
     }
+    auto t_stop = std::chrono::high_resolution_clock::now();
+
+    auto duration = std::chrono::duration_cast<std::chrono::nanoseconds>(t_stop - t_start);
+
+    std::cout << "Duration: " << duration.count() << std::endl;
 }
+
