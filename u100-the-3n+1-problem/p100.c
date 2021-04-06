@@ -25,8 +25,8 @@ int main()
     int aOrig, bOrig;
     int i;
 
-    while( scanf("%d %d\n",&a,&b)==2 ) {
-
+    while( scanf("%d %d\n",&a,&b)==2 )
+    {
         aOrig = a;
         bOrig = b;
 
