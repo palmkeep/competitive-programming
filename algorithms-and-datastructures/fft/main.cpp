@@ -32,7 +32,7 @@ typedef std::valarray<C> Carray;
  *
  * Returns void     : Transformed values are placed in the referenced $samples array
  */
-void FFT_h(Carray& samples, size_t N, bool inv)
+void FFT_h(Carray& samples, const size_t N, const bool inv)
 {
     double f = (inv) ? 2 : -2;
 
@@ -46,8 +46,6 @@ void FFT_h(Carray& samples, size_t N, bool inv)
         
         for (size_t i{0}; i < N/2; i++)
         {
-            // DEBUG
-            //printf("loop: (%lu) : max_i=%lu\n", i, i + N/2);
             C t = even[i];
             C exp = std::polar(1.0L, (long double)f * PI * i / N) * odd[i];
             samples[i]          = t + exp;
@@ -55,10 +53,9 @@ void FFT_h(Carray& samples, size_t N, bool inv)
         }
     }
 }
-// Maps regular or inverse FFT calls to FFT_h with the correct
-// coefficient; 2 for FFT and -2 for inverse FFT
-void FFT(Carray& samples) {FFT_h(samples, samples.size(), false);}
-void iFFT(Carray& samples) {FFT_h(samples, samples.size(), true);}
+// Maps regular or inverse FFT calls to FFT_h
+void FFT(Carray& samples)   { FFT_h(samples, samples.size(), false); }
+void iFFT(Carray& samples)  { FFT_h(samples, samples.size(), true); }
 
 
 /* pMultiplication
@@ -70,12 +67,16 @@ void iFFT(Carray& samples) {FFT_h(samples, samples.size(), true);}
  * */
 Carray pointMultiplication(Carray& A, Carray& B)
 {
-    if (A.size() != B.size())
+    if (A.size() != B.size()) {
         throw std::invalid_argument("Pointwise array multiplication with differing array length");
+    }
 
     Carray P;
     P.resize(A.size());
-    for (size_t i{0}; i < A.size(); i++) {P[i] = A[i] * B[i];}
+    for (size_t i{0}; i < A.size(); i++) {
+        P[i] = A[i] * B[i];
+    }
+
     return P;
 }
 
@@ -100,7 +101,8 @@ int inputArray(Carray& a)
     for (size_t i{0}; i <= a_size; i++)
     {
         scanf("%lu ", &n);
-        if (n != 0) {z = 0;}
+        if (n != 0) { z = 0; }
+
         a[i] = (C)n;
     }
     return z;
@@ -116,10 +118,11 @@ int inputArray(Carray& a)
  */
 int takeInput(Carray& a, Carray& b)
 {
-    if (inputArray(a) == 1 || inputArray(b) == 1)
+    if (inputArray(a) == 1 || inputArray(b) == 1) {
         return 1;
-    else
+    } else {
         return 0;
+    }
 }
 
 
@@ -142,15 +145,16 @@ void polynomialMultiplication()
     // Handles cases where one or more of the arrays are equal to zero
     if (z == 1) { puts("0\n0"); return; }
 
+    // Make e the smallest power of 2 larger than max(a.size(), b.size()).
     size_t s = (a.size() < b.size()) ? b.size() : a.size();
     size_t e = 1;
     while (e < s) { e<<=1; }
 
-    // Create new zero-padded arrays of length e*2 where e is the smallest 
-    // power of 2 larger than max(a.size(), b.size()).
+    // Create new zero-padded arrays of length e*2 from values in a and b
     Carray A;
     A.resize(e*2);
     for (size_t i{0}; i < a.size(); i++) {A[i] = a[i];}
+
     Carray B;
     B.resize(e*2);
     for (size_t i{0}; i < b.size(); i++) {B[i] = b[i];}
@@ -163,9 +167,10 @@ void polynomialMultiplication()
   
     // Get the degree of the resulting polynomial.
     size_t max_i{0};
-    for (size_t i{0}; i < P.size(); i++)
-    {
-        if ( 1e-1 < std::abs(P[i].real()) ) {max_i = i+1;}
+    for (size_t i{0}; i < P.size(); i++) {
+        if ( 1e-1 < std::abs(P[i].real()) ) {
+            max_i = i+1;
+        }
     }
     printf("%lu\n", max_i-1);
 
@@ -176,11 +181,13 @@ void polynomialMultiplication()
     {
         f = (long int)std::floor(P[i].real()/P.size());
         c = f + 1;
+
         v = P[i].real()/P.size();
-        if (v - (long double)f < (long double)c - v)
+        if (v - (long double)f < (long double)c - v) {
             printf("%ld ", f);
-        else
+        } else {
             printf("%ld ", c);
+        }
     }
     fputs("\n", stdout);
 }
